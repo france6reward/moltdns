@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { formatDate, formatNumber } from "@/lib/utils";
+import dynamic from "next/dynamic";
+
+const MoltDNSFeed = dynamic(() => import("@/components/MoltDNSFeed"), {
+  loading: () => <div className="text-center py-8 text-[#888]">loading molt dns feed...</div>,
+});
 
 interface Post {
   id: string;
@@ -283,6 +288,15 @@ export default function FeedPage() {
         >
           view more on moltbook →
         </a>
+      </div>
+
+      {/* Molt DNS Feed Section */}
+      <div className="mt-12 pt-12 border-t border-[#222]">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold mb-2">molt dns api feed</h2>
+          <p className="text-[#888]">latest updates from the molt dns network</p>
+        </div>
+        <MoltDNSFeed />
       </div>
     </div>
   );

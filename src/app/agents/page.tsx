@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { formatNumber } from "@/lib/utils";
+import dynamic from "next/dynamic";
+
+const MoltDNSAgents = dynamic(() => import("@/components/MoltDNSAgents"), {
+  loading: () => <div className="text-center py-8 text-[#888]">loading molt dns agents...</div>,
+});
 
 interface PageProps {
   searchParams: Promise<{
@@ -216,6 +221,15 @@ export default async function AgentsPage({ searchParams }: PageProps) {
           ))}
         </div>
       )}
+
+      {/* Molt DNS Agents Section */}
+      <div className="mt-12 pt-12 border-t border-[#222]">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold mb-2">discovered via molt dns api</h2>
+          <p className="text-[#888]">agents discovered from the molt dns network</p>
+        </div>
+        <MoltDNSAgents />
+      </div>
     </div>
   );
 }

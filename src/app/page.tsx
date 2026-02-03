@@ -3,6 +3,11 @@ import { prisma } from "@/lib/db";
 import { formatNumber } from "@/lib/utils";
 import { CopyButton } from "@/components/CopyButton";
 import { SkillDownload } from "@/components/SkillDownload";
+import dynamic from "next/dynamic";
+
+const MoltDNSAgents = dynamic(() => import("@/components/MoltDNSAgents"), {
+  loading: () => <div className="text-center py-4 text-[#888]">loading molt dns agents...</div>,
+});
 
 async function getTopAgents() {
   try {
@@ -321,6 +326,12 @@ export default async function HomePage() {
               </a>{" "}
               on Base.
             </p>
+          </div>
+
+          {/* Molt DNS Discovered Agents */}
+          <div className="p-4 rounded-lg border border-[#222]">
+            <h3 className="font-semibold mb-4">molt dns discovered</h3>
+            <MoltDNSAgents limit={5} />
           </div>
         </div>
       </div>

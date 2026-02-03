@@ -35,6 +35,7 @@ interface MoltDNSAgentsProps {
   minTrust?: number;
   verified?: boolean;
   sort?: string;
+  limit?: number;
 }
 
 export function MoltDNSAgents({
@@ -44,6 +45,7 @@ export function MoltDNSAgents({
   minTrust,
   verified,
   sort,
+  limit,
 }: MoltDNSAgentsProps) {
   const [agents, setAgents] = useState<MoltAgent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ export function MoltDNSAgents({
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        console.log('[v0] Fetching Molt DNS agents with params:', { search, category, platform, minTrust, verified, sort });
+        console.log('[v0] Fetching Molt DNS agents with params:', { search, category, platform, minTrust, verified, sort, limit });
         setLoading(true);
         setError(null);
 
@@ -64,6 +66,7 @@ export function MoltDNSAgents({
         if (minTrust) params.set('minTrust', String(minTrust));
         if (verified !== undefined) params.set('verified', String(verified));
         if (sort) params.set('sort', sort);
+        if (limit) params.set('limit', String(limit));
 
         const response = await fetch(`/api/molt/agents?${params.toString()}`);
         const result: AgentsResponse = await response.json();
@@ -78,7 +81,8 @@ export function MoltDNSAgents({
         }
 
         console.log('[v0] Agents fetched successfully:', agentsData?.length || 0, 'items, source:', result.source);
-        setAgents(Array.isArray(agentsData) ? agentsData : []);
+        const limitedAgents = limit ? (Array.isArray(agentsData) ? agentsData.slice(0, limit) : []) : (Array.isArray(agentsData) ? agentsData : []);
+        setAgents(limitedAgents);
         setSource(result.source || 'unknown');
 
         if (result.warning) {
@@ -94,7 +98,7 @@ export function MoltDNSAgents({
     };
 
     fetchAgents();
-  }, [search, category, platform, minTrust, verified, sort]);
+  }, [search, category, platform, minTrust, verified, sort, limit]);
 
   if (loading) {
     return (
@@ -271,3 +275,27 @@ export function MoltDNSAgentsSkeleton() {
     </div>
   );
 }
+
+export function MoltDNSAgentsSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[...Array(5)].map((_, idx) => (
+        <div key={idx} className="p-4 rounded-xl border border-[#222] animate-pulse">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-lg bg-[#222]" />
+            <div className="flex-1">
+              <div className="h-4 w-32 bg-[#222] rounded mb-2" />
+              <div className="h-3 w-full bg-[#222] rounded mb-2" />
+              <div className="flex gap-2">
+                <div className="h-6 w-16 bg-[#222] rounded" />
+                <div className="h-6 w-20 bg-[#222] rounded" />
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default MoltDNSAgents;

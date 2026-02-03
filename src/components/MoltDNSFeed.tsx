@@ -114,3 +114,5 @@ export function MoltDNSFeed() {
     </div>
   );
 }
+
+export default MoltDNSFeed;
